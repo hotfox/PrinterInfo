@@ -148,12 +148,38 @@ namespace Printer.Info
         public void WriteSNTail(int SNTail,PrinterCategory category)
         {
             string name = Enum.GetName(typeof(PrinterCategory), category);
-            SqlCommand command2 = new SqlCommand($"UPDATE SNTail SET {name}={SNTail} WHERE 1=1",con);
+            SqlCommand command = new SqlCommand($"UPDATE SNTail SET {name}={SNTail} WHERE 1=1",con);
             if (con.State == System.Data.ConnectionState.Closed)
             {
                 con.Open();
             }
-            command2.ExecuteNonQuery();
+            command.ExecuteNonQuery();
+        }
+        public void WriteFlag(int flag,PrinterCategory category)
+        {
+            string name = Enum.GetName(typeof(PrinterCategory), category) + "Flag";
+            SqlCommand command = new SqlCommand($"UPDATE SNTail SET {name}={flag} WHERE 1=1", con);
+            if (con.State == System.Data.ConnectionState.Closed)
+            {
+                con.Open();
+            }
+            command.ExecuteNonQuery();
+        }
+        public int ReadFlag(PrinterCategory category)
+        {
+            string name = Enum.GetName(typeof(PrinterCategory), category) + "Flag";
+            SqlCommand command = new SqlCommand($"SELECT {name} FROM SNTail", con);
+            if (con.State == System.Data.ConnectionState.Closed)
+            {
+                con.Open();
+            }
+            SqlDataReader reader = command.ExecuteReader();
+            PrinterInfo info = new PrinterInfo();
+            int flag = 0;
+            if (reader.Read())
+                flag = (int)reader[0];
+            reader.Close();
+            return flag;
         }
     }
 }
