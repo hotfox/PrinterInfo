@@ -21,6 +21,8 @@ namespace ExcelImport
                     return PrinterCategory.IClass;
                 case "M CLASS":
                     return PrinterCategory.MClass;
+                case "H CLASS":
+                    return PrinterCategory.HClass;
                 default:
                     throw new ArgumentNullException(sheet);
             }
@@ -28,7 +30,7 @@ namespace ExcelImport
         public string Path { get; set; }
         public AsyncInfoUploader()
         {
-            mappers = new string[] {"I CLASS","M CLASS" };
+            mappers = new string[] {"I CLASS","M CLASS","H CLASS" };
         }
         public async Task<int> UploadExistSheetsAsync(CancellationToken ct,IProgress<double> progress=null)
         {

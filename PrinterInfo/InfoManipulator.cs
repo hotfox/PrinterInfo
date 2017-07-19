@@ -8,7 +8,7 @@ using System.Data.SqlClient;
 
 namespace Printer.Info
 {
-    public enum PrinterCategory { MClass,IClass,EClass,}
+    public enum PrinterCategory { MClass,IClass,HClass,}
     public class PrinterInfo
     {
         public string CID { get; set; }
@@ -27,6 +27,8 @@ namespace Printer.Info
                     return "MClassLabelInfo";
                 case PrinterCategory.IClass:
                     return "IClassLabelInfo";
+                case PrinterCategory.HClass:
+                    return "HClassLabelInfo";
                 default:
                     return string.Empty;
             }
