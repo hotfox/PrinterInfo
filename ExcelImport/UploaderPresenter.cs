@@ -98,6 +98,7 @@ namespace ExcelImport
             _uploader.ProgressChanged += Uploader_ProgressChanged;
             SelectedFileCommand = new DelegateCommand(ExecuteSelectFileCommand);
             UploadCommand = new DelegateCommand(ExecuteUploadCommand);
+            ExportCommand = new DelegateCommand(ExecuteExportCommand);
         }
 
         private void Uploader_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -128,6 +129,7 @@ namespace ExcelImport
         public static readonly DependencyProperty ReportedProgressProperty = DependencyProperty.Register("ReportedProgress", typeof(int), typeof(UploaderPresenter));
         public ICommand SelectedFileCommand { get; private set; }
         public ICommand UploadCommand { get; private set; }
+        public ICommand ExportCommand { get; private set; }
         public string UploadFileName
         {
             get { return (string)GetValue(UploadFileNameProperty); }
@@ -160,7 +162,6 @@ namespace ExcelImport
             _controller = await Window.ShowProgressAsync("Please wait","Uploading......",true);
             var wapper = new Wrapper(_controller);
             UploadingState = UploadState.Uploading;
-            //_uploader.RunWorkerAsync();
             CancellationTokenSource cts = new CancellationTokenSource();
             _controller.Canceled += (sender, e) => { cts.Cancel(); };
             try
@@ -177,7 +178,7 @@ namespace ExcelImport
                 await _controller.CloseAsync();
                 await Window.ShowMessageAsync("Upload Success", $"{result} sheet(s) is(are) uploaded");
             }
-            catch (OperationCanceledException ex)
+            catch (OperationCanceledException)
             {
                 await _controller.CloseAsync();
             }
@@ -185,6 +186,28 @@ namespace ExcelImport
             {
                 await _controller.CloseAsync();
                 await Window.ShowMessageAsync("Error",ex.Message);
+            }
+        }
+        private async void ExecuteExportCommand()
+        {
+            _controller = await Window.ShowProgressAsync("Please wait", "Exporting......", true);
+            var wapper = new Wrapper(_controller);
+            UploadingState = UploadState.Uploading;
+            CancellationTokenSource cts = new CancellationTokenSource();
+            _controller.Canceled += (sender, e) => { cts.Cancel(); };
+            try
+            {
+                await _async_uploader.ExportAsync(cts.Token, wapper);
+                await _controller.CloseAsync();
+            }
+            catch (OperationCanceledException)
+            {
+                await _controller.CloseAsync();
+            }
+            catch (Exception ex)
+            {
+                await _controller.CloseAsync();
+                await Window.ShowMessageAsync("Error", ex.Message);
             }
         }
         private AsyncInfoUploader _async_uploader = new AsyncInfoUploader();

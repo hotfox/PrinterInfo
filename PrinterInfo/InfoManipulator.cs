@@ -5,15 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.Sql;
 using System.Data.SqlClient;
+using System.Data;
 
 namespace Printer.Info
 {
-    public enum PrinterCategory { MClass,IClass,HClass,}
+    public enum PrinterCategory { MClass,IClass,HClass,AClass,EClass}
     public class PrinterInfo
     {
         public string CID { get; set; }
         public string PackageLabel { get; set; }
         public string AgencyLabel { get; set; }
+        public string ModelName { get; set; }
     }
 
     public class InfoManipulator
@@ -29,6 +31,10 @@ namespace Printer.Info
                     return "IClassLabelInfo";
                 case PrinterCategory.HClass:
                     return "HClassLabelInfo";
+                case PrinterCategory.AClass:
+                    return "AClassLabelInfo";
+                case PrinterCategory.EClass:
+                    return "EClassLabelInfo";
                 default:
                     return string.Empty;
             }
@@ -66,7 +72,7 @@ namespace Printer.Info
         public PrinterInfo GetPrinterInfo(string CID, PrinterCategory category)
         {
             string table_name = GetTableName(category);
-            SqlCommand command = new SqlCommand($"SELECT Package,Agency FROM {table_name} WHERE CID='{CID}'", con);
+            SqlCommand command = new SqlCommand($"SELECT Package,Agency,ModelName FROM {table_name} WHERE CID='{CID}'", con);
             if (con.State == System.Data.ConnectionState.Closed)
             {
                 con.Open();
@@ -75,6 +81,7 @@ namespace Printer.Info
             PrinterInfo info = new PrinterInfo();
             while(reader.Read())
             {
+                info.ModelName = reader[2] == DBNull.Value ? string.Empty : (string)reader[2];
                 info.AgencyLabel = (string)reader[1];
                 info.PackageLabel = (string)reader[0];
                 info.CID = CID;
@@ -85,7 +92,7 @@ namespace Printer.Info
         public void InsertPrinterInfo(PrinterInfo info,PrinterCategory category)
         {
             string table_name = GetTableName(category);
-            SqlCommand command = new SqlCommand($"INSERT INTO {table_name} (CID,Agency,Package) VALUES('{info.CID}','{info.AgencyLabel}','{info.PackageLabel}')",con);
+            SqlCommand command = new SqlCommand($"INSERT INTO {table_name} (CID,Agency,Package,ModelName) VALUES('{info.CID}','{info.AgencyLabel}','{info.PackageLabel}','{info.ModelName}')",con);
             if(con.State == System.Data.ConnectionState.Closed)
             {
                 con.Open();
@@ -96,11 +103,24 @@ namespace Printer.Info
         {
             string table_name = GetTableName(category);
             SqlCommand command = new SqlCommand($"DELETE FROM {table_name}", con);
-            if (con.State == System.Data.ConnectionState.Closed)
+            if (con.State == ConnectionState.Closed)
             {
                 con.Open();
             }
             command.ExecuteNonQuery();
+        }
+        public DataSet GetAllInfo(PrinterCategory category)
+        {
+            string tabel_name = GetTableName(category);
+            SqlCommand command = new SqlCommand($"SELECT * FROM {tabel_name}", con);
+            if( con.State==ConnectionState.Closed)
+            {
+                con.Open();
+            }
+            SqlDataAdapter da = new SqlDataAdapter(command);
+            DataSet ds = new DataSet(tabel_name);
+            da.Fill(ds);
+            return ds;
         }
         public int GetSNTail(PrinterCategory category)
         {

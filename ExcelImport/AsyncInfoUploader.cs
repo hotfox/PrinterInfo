@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Printer.Info;
 using LinqToExcel;
 using System.Threading;
+using ExcelLibrary;
 
 namespace ExcelImport
 {
@@ -23,6 +24,10 @@ namespace ExcelImport
                     return PrinterCategory.MClass;
                 case "H CLASS":
                     return PrinterCategory.HClass;
+                case "A CLASS":
+                    return PrinterCategory.AClass;
+                case "E CLASS":
+                    return PrinterCategory.EClass;
                 default:
                     throw new ArgumentNullException(sheet);
             }
@@ -30,7 +35,7 @@ namespace ExcelImport
         public string Path { get; set; }
         public AsyncInfoUploader()
         {
-            mappers = new string[] {"I CLASS","M CLASS","H CLASS" };
+            mappers = new string[] {"I CLASS","M CLASS","H CLASS","A CLASS","E CLASS" };
         }
         public async Task<int> UploadExistSheetsAsync(CancellationToken ct,IProgress<double> progress=null)
         {
@@ -54,12 +59,24 @@ namespace ExcelImport
                         info.CID = a["CID"];
                         info.AgencyLabel = a["Agency"];
                         info.PackageLabel = a["Package"];
+                        info.ModelName = a["ModelName"];
                         manipulator.InsertPrinterInfo(info, category);
                         ct.ThrowIfCancellationRequested();
                         if (progress != null) { progress.Report(((double)++i / entry_count)*j/count); }
                     });
                 }
                 return j;
+            });
+        }
+        public async Task ExportAsync(CancellationToken ct, IProgress<double> progress = null)
+        {
+            await Task.Run(() => 
+            {
+                DataSetHelper.CreateWorkbook("ACLASS.xls", manipulator.GetAllInfo(PrinterCategory.AClass));
+                DataSetHelper.CreateWorkbook("ECLASS.xls", manipulator.GetAllInfo(PrinterCategory.EClass));
+                DataSetHelper.CreateWorkbook("HCLASS.xls", manipulator.GetAllInfo(PrinterCategory.HClass));
+                DataSetHelper.CreateWorkbook("ICLASS.xls", manipulator.GetAllInfo(PrinterCategory.IClass));
+                DataSetHelper.CreateWorkbook("MCLASS.xls", manipulator.GetAllInfo(PrinterCategory.MClass));
             });
         }                
     }
