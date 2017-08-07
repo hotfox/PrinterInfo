@@ -99,6 +99,16 @@ namespace Printer.Info
             }
             command.ExecuteNonQuery();
         }
+        public void UpdatePrintInfo(PrinterInfo info,PrinterCategory category)
+        {
+            string table_name = GetTableName(category);
+            SqlCommand command = new SqlCommand($"UPDATE {table_name} SET Agency='{info.AgencyLabel}',Package='{info.PackageLabel}',ModelName='{info.ModelName}' WHERE CID='{info.CID}'", con);
+            if (con.State == System.Data.ConnectionState.Closed)
+            {
+                con.Open();
+            }
+            command.ExecuteNonQuery();
+        }
         public void DeleteAllInfo(PrinterCategory category)
         {
             string table_name = GetTableName(category);

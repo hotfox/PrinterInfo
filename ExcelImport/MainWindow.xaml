@@ -34,6 +34,8 @@
         <Controls:Tile Width="75" Height="75" Content="Select" Count="1" TiltFactor="2" Command="{Binding SelectedFileCommand}"/>
         <Controls:Tile Width="75" Height="75" Content="Upload" Count="2" TiltFactor="2" Command="{Binding UploadCommand}"
                        IsEnabled="{Binding UploadingState,Converter={StaticResource UploadStateToBoolConverter}}" />
-        <Controls:Tile Width="75" Height="75" Content="Export" Count="3" TiltFactor="2" Command="{Binding ExportCommand}"/>
+        <Controls:Tile Width="75" Height="75" Content="Update" Count="3" TiltFactor="2" Command="{Binding UpdateCommand}"
+                       IsEnabled="{Binding UploadingState,Converter={StaticResource UploadStateToBoolConverter}}"/>
+            <Controls:Tile Width="75" Height="75" Content="Export" Count="4" TiltFactor="2" Command="{Binding ExportCommand}"/>
     </WrapPanel>
 </Controls:MetroWindow>

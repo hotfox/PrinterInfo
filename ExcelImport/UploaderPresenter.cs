@@ -99,6 +99,7 @@ namespace ExcelImport
             SelectedFileCommand = new DelegateCommand(ExecuteSelectFileCommand);
             UploadCommand = new DelegateCommand(ExecuteUploadCommand);
             ExportCommand = new DelegateCommand(ExecuteExportCommand);
+            UpdateCommand = new DelegateCommand(ExecuteUpdateCommand);
         }
 
         private void Uploader_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -130,6 +131,7 @@ namespace ExcelImport
         public ICommand SelectedFileCommand { get; private set; }
         public ICommand UploadCommand { get; private set; }
         public ICommand ExportCommand { get; private set; }
+        public ICommand UpdateCommand { get; private set; }
         public string UploadFileName
         {
             get { return (string)GetValue(UploadFileNameProperty); }
@@ -209,6 +211,12 @@ namespace ExcelImport
                 await _controller.CloseAsync();
                 await Window.ShowMessageAsync("Error", ex.Message);
             }
+        }
+        private void ExecuteUpdateCommand()
+        {
+            UploadingState = UploadState.Uploading;
+            _async_uploader.Update();
+            UploadingState = UploadState.Success;
         }
         private AsyncInfoUploader _async_uploader = new AsyncInfoUploader();
         private BakgroundInfoUploader _uploader;

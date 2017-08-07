@@ -78,6 +78,29 @@ namespace ExcelImport
                 DataSetHelper.CreateWorkbook("ICLASS.xls", manipulator.GetAllInfo(PrinterCategory.IClass));
                 DataSetHelper.CreateWorkbook("MCLASS.xls", manipulator.GetAllInfo(PrinterCategory.MClass));
             });
+        }
+        
+        public void Update()
+        {
+            var excelFile = new ExcelQueryFactory(Path);
+            var sheets = from s in excelFile.GetWorksheetNames()
+                         where mappers.Contains(s)
+                         select s;
+            foreach (string sheet in sheets)
+            {
+                PrinterCategory category = GetCagegoryFromSheetName(sheet);
+                var query = excelFile.Worksheet(sheet);
+                int entry_count = query.Count();
+                int i = 0;
+                query.ToList().ForEach((a) => {
+                    PrinterInfo info = new PrinterInfo();
+                    info.CID = a["CID"];
+                    info.AgencyLabel = a["Agency"];
+                    info.PackageLabel = a["Package"];
+                    info.ModelName = a["ModelName"];
+                    manipulator.UpdatePrintInfo(info, category);
+                });
+            }
         }                
     }
 }
