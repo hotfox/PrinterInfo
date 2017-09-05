@@ -60,6 +60,7 @@ namespace ExcelImport
                         info.AgencyLabel = a["Agency"];
                         info.PackageLabel = a["Package"];
                         info.ModelName = a["ModelName"];
+                        info.SNRule = a["SNRule"];
                         manipulator.InsertPrinterInfo(info, category);
                         ct.ThrowIfCancellationRequested();
                         if (progress != null) { progress.Report(((double)++i / entry_count)*j/count); }
@@ -91,7 +92,6 @@ namespace ExcelImport
                 PrinterCategory category = GetCagegoryFromSheetName(sheet);
                 var query = excelFile.Worksheet(sheet);
                 int entry_count = query.Count();
-                int i = 0;
                 query.ToList().ForEach((a) => {
                     PrinterInfo info = new PrinterInfo();
                     info.CID = a["CID"];

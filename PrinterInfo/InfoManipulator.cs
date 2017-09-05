@@ -16,6 +16,7 @@ namespace Printer.Info
         public string PackageLabel { get; set; }
         public string AgencyLabel { get; set; }
         public string ModelName { get; set; }
+        public string SNRule { get; set; }
     }
 
     public class InfoManipulator
@@ -72,7 +73,7 @@ namespace Printer.Info
         public PrinterInfo GetPrinterInfo(string CID, PrinterCategory category)
         {
             string table_name = GetTableName(category);
-            SqlCommand command = new SqlCommand($"SELECT Package,Agency,ModelName FROM {table_name} WHERE CID='{CID}'", con);
+            SqlCommand command = new SqlCommand($"SELECT Package,Agency,ModelName,SNRule FROM {table_name} WHERE CID='{CID}'", con);
             if (con.State == System.Data.ConnectionState.Closed)
             {
                 con.Open();
@@ -85,6 +86,7 @@ namespace Printer.Info
                 info.AgencyLabel = (string)reader[1];
                 info.PackageLabel = (string)reader[0];
                 info.CID = CID;
+                info.SNRule = reader[3] == DBNull.Value ? string.Empty : (string)reader[3];
             }
             reader.Close();
             return info;
@@ -92,7 +94,7 @@ namespace Printer.Info
         public void InsertPrinterInfo(PrinterInfo info,PrinterCategory category)
         {
             string table_name = GetTableName(category);
-            SqlCommand command = new SqlCommand($"INSERT INTO {table_name} (CID,Agency,Package,ModelName) VALUES('{info.CID}','{info.AgencyLabel}','{info.PackageLabel}','{info.ModelName}')",con);
+            SqlCommand command = new SqlCommand($"INSERT INTO {table_name} (CID,Agency,Package,ModelName,SNRule) VALUES('{info.CID}','{info.AgencyLabel}','{info.PackageLabel}','{info.ModelName}',{info.SNRule})",con);
             if(con.State == System.Data.ConnectionState.Closed)
             {
                 con.Open();
@@ -102,7 +104,7 @@ namespace Printer.Info
         public void UpdatePrintInfo(PrinterInfo info,PrinterCategory category)
         {
             string table_name = GetTableName(category);
-            SqlCommand command = new SqlCommand($"UPDATE {table_name} SET Agency='{info.AgencyLabel}',Package='{info.PackageLabel}',ModelName='{info.ModelName}' WHERE CID='{info.CID}'", con);
+            SqlCommand command = new SqlCommand($"UPDATE {table_name} SET Agency='{info.AgencyLabel}',Package='{info.PackageLabel}',ModelName='{info.ModelName}',SNRule='{info.SNRule}' WHERE CID='{info.CID}'", con);
             if (con.State == System.Data.ConnectionState.Closed)
             {
                 con.Open();
