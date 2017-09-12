@@ -94,7 +94,7 @@ namespace Printer.Info
         public void InsertPrinterInfo(PrinterInfo info,PrinterCategory category)
         {
             string table_name = GetTableName(category);
-            SqlCommand command = new SqlCommand($"INSERT INTO {table_name} (CID,Agency,Package,ModelName,SNRule) VALUES('{info.CID}','{info.AgencyLabel}','{info.PackageLabel}','{info.ModelName}',{info.SNRule})",con);
+            SqlCommand command = new SqlCommand($"INSERT INTO {table_name} (CID,Agency,Package,ModelName,SNRule) VALUES('{info.CID}','{info.AgencyLabel}','{info.PackageLabel}','{info.ModelName}','{info.SNRule}')",con);
             if(con.State == System.Data.ConnectionState.Closed)
             {
                 con.Open();
