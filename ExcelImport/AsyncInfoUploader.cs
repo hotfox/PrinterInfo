@@ -61,6 +61,7 @@ namespace ExcelImport
                         info.PackageLabel = a["Package"];
                         info.ModelName = a["ModelName"];
                         info.SNRule = a["SNRule"];
+                        info.Version = a["Version"];
                         manipulator.InsertPrinterInfo(info, category);
                         ct.ThrowIfCancellationRequested();
                         if (progress != null) { progress.Report(((double)++i / entry_count)*j/count); }
