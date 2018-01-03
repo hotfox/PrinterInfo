@@ -9,7 +9,7 @@ using System.Data;
 
 namespace Printer.Info
 {
-    public enum PrinterCategory { MClass,IClass,HClass,AClass,EClass}
+    public enum PrinterCategory { MClass,IClass,HClass,AClass,EClass, Performance}
     public class PrinterInfo
     {
         public string CID { get; set; }
@@ -37,6 +37,8 @@ namespace Printer.Info
                     return "AClassLabelInfo";
                 case PrinterCategory.EClass:
                     return "EClassLabelInfo";
+                case PrinterCategory.Performance:
+                    return "PerformanceLabelInfo";
                 default:
                     return string.Empty;
             }
