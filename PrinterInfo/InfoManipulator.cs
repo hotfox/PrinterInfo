@@ -160,6 +160,38 @@ namespace Printer.Info
             command2.ExecuteNonQuery();
             return sn;
         }
+        public int GetPitneySNTail()
+        {
+            string name = "Pitney";
+            SqlCommand command = new SqlCommand($"SELECT {name} FROM SNTail", con);
+            if (con.State == System.Data.ConnectionState.Closed)
+            {
+                con.Open();
+            }
+            SqlDataReader reader = command.ExecuteReader();
+            PrinterInfo info = new PrinterInfo();
+            int sn = 0;
+            if (reader.Read())
+                sn = (int)reader[0];
+            reader.Close();
+            SqlCommand command2 = new SqlCommand($"UPDATE SNTail SET {name}={sn + 1} WHERE 1=1", con);
+            if (con.State == System.Data.ConnectionState.Closed)
+            {
+                con.Open();
+            }
+            command2.ExecuteNonQuery();
+            return sn;
+        }
+        public void WritePitneySNTail(int SNTail)
+        {
+            string name = "Pitney";
+            SqlCommand command = new SqlCommand($"UPDATE SNTail SET {name}={SNTail} WHERE 1=1", con);
+            if (con.State == System.Data.ConnectionState.Closed)
+            {
+                con.Open();
+            }
+            command.ExecuteNonQuery();
+        }
         public int GetWeek()
         {
             SqlCommand command = new SqlCommand($"SELECT Week FROM SNTail", con);
